@@ -54,8 +54,13 @@ verdure --install-cmd="wget https://www.example.com/$PROGRAM/$VERSION/$PROGRAM; 
 ```
 
 The command is passed to `sh -c` with the environment variables `PROGRAM`
-and `VERSION` set to the values passed to verdure, and executed in the
-installation directory.
+and `VERSION` set to the values passed to verdure and `PROGRAM_ENV` set to
+the name of a shell file that can have environment variables and commands
+appended to it, and executed in the installation directory.
+
+Installation packages, source tarballs, Git checkouts and similar
+directories of files used to build and install a program should be unpacked,
+checked out etc. into a directory called `PROGRAM-VERSION`.
 
 ### Installation helpers
 
@@ -64,3 +69,25 @@ usefulness is its pre-written installation helpers. These are programs whose
 name starts `verdure-`, so you can see what is available by typing
 `verdure-` and pressing TAB in most shells. The supplied scripts will tell
 you more about themselves with `--help`.
+
+An example that mixes some helpers with custom code:
+
+```
+verdure --install-cmd \
+    'verdure-git https://github.com/rrthomas/$PROGRAM && \
+    verdure-cpanm File::Slurp File::Which && \
+    (cd $PROGRAM-$VERSION && ./setup-git-config && make) && \
+    ln -s $PROGRAM-$VERSION/$PROGRAM .' \
+    nancy 6.2 --version
+```
+
+First we check out the correct version of Nancy with `verdure-git`.
+`verdure-cpanm` installs Nancy’s Perl dependencies, and sets up the
+`PERL5LIB` path. The next line initializes the repository and builds the
+`nancy` script. Finally, we link the script into the main verdure directory,
+so that verdure can run it.
+
+The first three lines are adapted from Nancy’s installation instructions.
+
+We request version 6.2 of Nancy, and run it with the command-line argument
+`--version`.

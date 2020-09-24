@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+#
+# © Reuben Thomas <rrt@sc3d.org> 2020
+# Released under the GPL version 3, or (at your option) any later version.
+
+import os
+import argparse
+import subprocess
+
+
+# Command-line arguments
+parser = argparse.ArgumentParser(
+    description='Clone a git repository for verdure into the directory $PROGRAM-$VERSION.',
+)
+parser.add_argument('-V', '--version', action='version',
+                    version='%(prog)s 0.1 (24 Sep 2020) by Reuben Thomas <rrt@sc3d.org>')
+parser.add_argument('repository', metavar='REPOSITORY',
+                    help='Git repository to clone')
+args = parser.parse_args()
+
+# Clone repository
+subprocess.check_call([
+    'git', 'clone',
+    '--recursive',
+    '--config', 'advice.detachedHead=false',
+    '--branch', os.getenv('VERSION'),
+    args.repository,
+    f"{os.getenv('PROGRAM')}-{os.getenv('VERSION')}",
+])

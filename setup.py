@@ -27,7 +27,11 @@ setup(name='verdure',
       maintainer_email='rrt@sc3d.org',
       url='https://github.com/rrthomas/verdure',
       license='GPL v3 or later',
-      scripts=['verdure'],
+      scripts=[
+          'verdure',
+          'verdure-cpanm',
+          'verdure-git',
+      ],
       classifiers=[
           'Environment :: Console',
           'Programming Language :: Python :: 3',

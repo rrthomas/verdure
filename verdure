@@ -35,7 +35,7 @@ parser.add_argument('program', metavar='PROGRAM',
                     help='the name of the program to run')
 parser.add_argument('version', metavar='VERSION',
                     help='the desired version of the program to run')
-parser.add_argument('args', metavar='ARGUMENT', nargs='*',
+parser.add_argument('args', metavar='...', nargs=argparse.REMAINDER,
                     help='arguments to PROGRAM')
 args = parser.parse_args()
 
@@ -49,13 +49,15 @@ def die(s): warn(s); sys.exit(1)
 xdg_cache_dir = os.getenv('XDG_CACHE_HOME') or os.path.expanduser('~/.cache')
 install_dir = os.path.join(xdg_cache_dir, parser.prog, args.program, args.version)
 program_executable = os.path.join(install_dir, args.program)
+program_runner = os.path.join(install_dir, f'{args.program}-run')
+program_environment = os.path.join(install_dir, f'{args.program}-env')
 
 # Check whether we have pointless command-line arguments
 if args.install_only and len(args.args) > 0:
     die(f"arguments passed to '{args.program}' but --install-only was used")
 
 # Install program if needed
-if args.force or not os.path.isfile(program_executable) or not os.access(program_executable, os.X_OK):
+if args.force or not os.path.isfile(program_runner):
     if not args.install_cmd:
         die(f"'{args.program}' version {args.version} not found; use --install-cmd")
 
@@ -66,17 +68,24 @@ if args.force or not os.path.isfile(program_executable) or not os.access(program
         install_cmd = [
             'env',
             f'--chdir={install_dir}',
-            f'PROGRAM={args.program}', f'VERSION={args.version}',
+            f'PROGRAM={args.program}', f'VERSION={args.version}', f'PROGRAM_ENV={program_environment}',
             'sh', '-c', args.install_cmd,
         ]
         if args.verbose:
             warn('Installing: ' + ' '.join(install_cmd))
+        open(program_environment, 'a').close()
         subprocess.check_call(install_cmd)
+        with open(program_runner, 'w') as runner:
+            print(f'''\
+#!/bin/sh
+. {program_environment}
+{program_executable} "$@"''', file=runner)
+        subprocess.check_call(['chmod', '+x', program_runner])
     except Exception as err:
         die(err)
 
 # Run
 if not args.install_only:
     if args.verbose:
-        warn('Running: ' + ' '.join([program_executable] + args.args))
-    os.execv(program_executable, [program_executable] + args.args)
+        warn('Running: ' + ' '.join([program_runner] + args.args))
+    os.execv(program_runner, [program_runner] + args.args)
