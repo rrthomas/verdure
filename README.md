@@ -78,7 +78,7 @@ verdure --install-cmd \
     verdure-cpanm File::Slurp File::Which && \
     (cd $PROGRAM-$VERSION && ./setup-git-config && make) && \
     ln -s $PROGRAM-$VERSION/$PROGRAM .' \
-    nancy 6.2 --version
+    nancy 6.4 --version
 ```
 
 First we check out the correct version of Nancy with `verdure-git`.
@@ -89,5 +89,16 @@ so that verdure can run it.
 
 The first three lines are adapted from Nancy’s installation instructions.
 
-We request version 6.2 of Nancy, and run it with the command-line argument
+We request version 6.4 of Nancy, and run it with the command-line argument
 `--version`.
+
+It is simpler to install from a release:
+
+```
+verdure --install-cmd \
+    'wget https://github.com/rrthomas/nancy/releases/download/v$VERSION/$PROGRAM-$VERSION.zip && \
+    unzip $PROGRAM-$VERSION.zip && \
+    verdure-cpanm File::Slurp File::Which && \
+    ln -s $PROGRAM-$VERSION/$PROGRAM .' \
+    nancy 6.4 --version
+```
