@@ -16,14 +16,16 @@ parser.add_argument('-V', '--version', action='version',
                     version='%(prog)s 0.1 (24 Sep 2020) by Reuben Thomas <rrt@sc3d.org>')
 parser.add_argument('repository', metavar='REPOSITORY',
                     help='Git repository to clone')
+parser.add_argument('args', metavar='...', nargs=argparse.REMAINDER,
+                    help='extra arguments to git')
 args = parser.parse_args()
 
 # Clone repository
 subprocess.check_call([
     'git', 'clone',
-    '--recursive',
     '--config', 'advice.detachedHead=false',
-    '--branch', os.getenv('VERSION'),
+    '--branch', os.getenv('VERSION')
+] + args.args + [
     args.repository,
     f"{os.getenv('PROGRAM')}-{os.getenv('VERSION')}",
 ])

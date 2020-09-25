@@ -95,9 +95,30 @@ It is simpler to install from a release:
 
 ```
 verdure --install-cmd \
-    'wget https://github.com/rrthomas/nancy/releases/download/v$VERSION/$PROGRAM-$VERSION.zip && \
+    'wget https://github.com/rrthomas/$PROGRAM/releases/download/v$VERSION/$PROGRAM-$VERSION.zip && \
     unzip $PROGRAM-$VERSION.zip && \
     verdure-cpanm File::Slurp File::Which && \
     ln -s $PROGRAM-$VERSION/$PROGRAM .' \
     nancy 6.4 --version
+```
+
+With a standard build system, things can be simpler still:
+
+```
+verdure --install-cmd
+    'verdure-git https://github.com/rrthomas/$PROGRAM -- --recursive && \
+    (cd $PROGRAM-$VERSION && verdure-autotools-bootstrap) && \
+    ln -s $PROGRAM-$VERSION/src/$PROGRAM .' \
+    beetle v2.0.8 --version
+```
+
+Note the extra argument `--recursive` to `verdure-git`: this should not be
+needed, but is, owing to a bug in Beetle’s build system. Verdure can cope! The bug is fixed on master:
+
+```
+verdure --install-cmd
+    'verdure-git https://github.com/rrthomas/$PROGRAM && \
+    (cd $PROGRAM-$VERSION && verdure-autotools-bootstrap) && \
+    ln -s $PROGRAM-$VERSION/src/$PROGRAM .' \
+    beetle master --version
 ```
