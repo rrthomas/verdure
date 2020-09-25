@@ -113,12 +113,22 @@ verdure --install-cmd
 ```
 
 Note the extra argument `--recursive` to `verdure-git`: this should not be
-needed, but is, owing to a bug in Beetle’s build system. Verdure can cope! The bug is fixed on master:
+needed, but is, owing to a bug in Beetle’s build system. Verdure can cope!
+The bug is fixed on master, and see an alternative form of `--install-cmd`:
 
 ```
-verdure --install-cmd
-    'verdure-git https://github.com/rrthomas/$PROGRAM && \
+echo 'verdure-git https://github.com/rrthomas/$PROGRAM && \
     (cd $PROGRAM-$VERSION && verdure-autotools-bootstrap) && \
-    ln -s $PROGRAM-$VERSION/src/$PROGRAM .' \
-    beetle master --version
+    ln -s $PROGRAM-$VERSION/src/$PROGRAM .' | \
+    verdure --install-cmd=- beetle master --version
 ```
+
+Finally, `--install-prog` allows an arbitrary executable to be used for
+installation:
+
+```
+echo 'verdure-git https://github.com/rrthomas/$PROGRAM && \
+    (cd $PROGRAM-$VERSION && verdure-autotools-bootstrap) && \
+    ln -s $PROGRAM-$VERSION/src/$PROGRAM .' > ./install-beetle
+verdure --install-prog=./install-beetle beetle master --version
+`

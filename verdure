@@ -17,9 +17,8 @@ import subprocess
 parser = argparse.ArgumentParser(
     description='Run a program with a given version.',
     epilog='''
-A command template is a shell script. It is run with environment variables
-PROGRAM and VERSION set to the values provided on the command line.
-''',
+The COMMAND or PROGRAM is run with environment variables PROGRAM and VERSION
+set to the values provided on the command line.''',
 )
 parser.add_argument('-V', '--version', action='version',
                     version=f'%(prog)s version {__version__} (24 Sep 2020) by Reuben Thomas <rrt@sc3d.org>')
@@ -27,8 +26,11 @@ parser.add_argument('-f', '--force', action='store_true',
                     help='install the given version even if already installed')
 parser.add_argument('--install-only', action='store_true',
                     help='just install the program, do not run it')
-parser.add_argument('--install-cmd', metavar='COMMAND-TEMPLATE',
-                    help='how to download and install the program')
+install_group = parser.add_mutually_exclusive_group()
+install_group.add_argument('--install-cmd', metavar='COMMAND',
+                           help='a shell command to download and install the program ("-" means read from standard input)')
+install_group.add_argument('--install-prog', metavar='PROGRAM',
+                           help='a program to download and install the program')
 parser.add_argument('-q', '--quiet', action='store_true',
                     help='suppress the output of the install command')
 parser.add_argument('-v', '--verbose', action='store_true',
@@ -51,7 +53,6 @@ def die(s): warn(s); sys.exit(1)
 xdg_cache_dir = os.getenv('XDG_CACHE_HOME') or os.path.expanduser('~/.cache')
 install_dir = os.path.join(xdg_cache_dir, parser.prog, args.program, args.version)
 program_executable = os.path.join(install_dir, args.program)
-program_runner = os.path.join(install_dir, f'{args.program}-run')
 program_environment = os.path.join(install_dir, f'{args.program}-env')
 
 # Check whether we have pointless command-line arguments
@@ -59,38 +60,42 @@ if args.install_only and len(args.args) > 0:
     die(f"arguments passed to '{args.program}' but --install-only was used")
 
 # Install program if needed
-if args.force or not os.path.isfile(program_runner):
-    if not args.install_cmd:
-        die(f"'{args.program}' version {args.version} not found; use --install-cmd")
+if args.force or not os.path.isfile(program_environment):
+    if not args.install_cmd and not args.install_prog:
+        die(f"'{args.program}' version {args.version} not installed;\n"
+            "use --install-cmd or --install-prog")
 
     try:
         if os.path.exists(install_dir):
             shutil.rmtree(install_dir)
         pathlib.Path(install_dir).mkdir(parents=True, exist_ok=True)
-        install_cmd = [
+        if args.install_cmd:
+            install_cmd = ['sh', '-c']
+            if args.install_cmd == '-':
+                install_cmd.append(sys.stdin.read())
+            else:
+                install_cmd.append(args.install_cmd)
+        elif args.install_prog:
+            install_cmd = [os.path.abspath(args.install_prog)]
+        cmd = [
             'env',
             f'--chdir={install_dir}',
             f'PROGRAM={args.program}', f'VERSION={args.version}', f'PROGRAM_ENV={program_environment}',
-            'sh', '-c', args.install_cmd,
-        ]
+        ] + install_cmd
         if args.verbose:
-            warn('Installing: ' + ' '.join(install_cmd))
+            warn('Installing: ' + ' '.join(cmd))
         open(program_environment, 'a').close()
         stdout, stderr = None, None
         if args.quiet:
             stdout, stderr = subprocess.DEVNULL, subprocess.DEVNULL
-        subprocess.check_call(install_cmd, stdout=stdout, stderr=stderr)
-        with open(program_runner, 'w') as runner:
-            print(f'''\
-#!/bin/sh
-. {program_environment}
-{program_executable} "$@"''', file=runner)
-        subprocess.check_call(['chmod', '+x', program_runner])
+        subprocess.check_call(cmd, stdout=stdout, stderr=stderr)
+        with open(program_environment, 'a') as f:
+            print(f'{program_executable} "$@"', file=f)
     except Exception as err:
         die(err)
 
 # Run
 if not args.install_only:
     if args.verbose:
-        warn('Running: ' + ' '.join([program_runner] + args.args))
-    os.execv(program_runner, [program_runner] + args.args)
+        warn('Running: ' + ' '.join([program_environment] + args.args))
+    os.execv('/bin/sh', [program_environment, program_environment] + args.args)
