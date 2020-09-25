@@ -3,8 +3,8 @@
 © 2020 Reuben Thomas <rrt@sc3d.org>  
 https://github.com/rrthomas/verdure  
 
-Verdure runs a particular version of a program, installing it in a temporary
-directory if necessary.
+Verdure runs a particular version of a program, first installing it if
+necessary.
 
 Verdure is free software, licensed under the GNU GPL version 3 (or, at your
 option, any later version).
@@ -35,8 +35,7 @@ With verdure, you can say
 verdure foo 1.3 --frobnicate wibble bar
 ```
 
-and verdure will run `foo --frobnicate wibble bar` with foo version 1.3,
-installing it first if necessary.
+and verdure will run `foo --frobnicate wibble bar` with foo version 1.3.
 
 Programs are installed in `$XDG_CACHE_DIR/verdure/PROGRAM/VERSION`. There
 must be an executable in that directory called `PROGRAM`, and any other
