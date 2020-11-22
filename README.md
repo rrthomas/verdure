@@ -131,4 +131,4 @@ echo 'verdure-git https://github.com/rrthomas/$PROGRAM && \
     (cd $PROGRAM-$VERSION && verdure-autotools-bootstrap) && \
     ln -s $PROGRAM-$VERSION/src/$PROGRAM .' > ./install-beetle
 verdure --install-prog=./install-beetle beetle master --version
-`
+```
