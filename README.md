@@ -4,7 +4,8 @@
 https://github.com/rrthomas/verdure  
 
 Verdure runs a particular version of a program, first installing it if
-necessary.
+necessary. (Users might be interested in the more capable
+[Spack](https://github.com/spack/spack)
 
 Verdure is free software, licensed under the GNU GPL version 3 (or, at your
 option, any later version).
