@@ -46,7 +46,7 @@ See `verdure --help` for further options.
 
 ### Installing programs automatically
 
-Programs can be installed manually, but verdure’s can install them
+Programs can be installed manually, but verdure can install them
 automatically. To do this, use the `--install-cmd` argument:
 
 ```
