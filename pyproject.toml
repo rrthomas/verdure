@@ -1,0 +1,36 @@
+[project]
+name = "verdure"
+version = "2"
+description = "Run a program with a given version"
+license = {text = "GPL v3 or later"}
+authors = [
+    {name = "Reuben Thomas", email = "rrt@sc3d.org"}
+]
+readme = "README.md"
+requires-python = ">= 3.9"
+classifiers = [
+    "Environment :: Console",
+    "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+Homepage = "https://github.com/rrthomas/verdure"
+Source = "https://github.com/rrthomas/verdure"
+
+[project.scripts]
+verdure = "verdure:main"
+verdure-autotools = "verdure.helpers.autotools:main"
+verdure-autotools-bootstrap = "verdure.helpers.autotools_bootstrap:main"
+verdure-configure-make = "verdure.helpers.configure_make:main"
+verdure-cpanm = "verdure.helpers.cpanm:main"
+verdure-git = "verdure.helpers.git:main"
+
+[tool.pyright]
+include = ["verdure"]
+
+[tool.ruff.lint]
+select = ["D", "E", "F", "I", "UP"]
+ignore = ["D1", "D203", "D213", "D401", "E501"]
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2

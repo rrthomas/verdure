@@ -1,6 +1,6 @@
 # Verdure
 
-© 2020 Reuben Thomas <rrt@sc3d.org>  
+© 2020-2025 Reuben Thomas <rrt@sc3d.org>  
 https://github.com/rrthomas/verdure  
 
 Verdure runs a particular version of a program, first installing it if
@@ -16,7 +16,7 @@ report them on the project’s web page (see above for addresses).
 
 ## Installation
 
-Verdure requires Python 3.6 or later. To install it, run:
+Verdure requires Python 3.9 or later. To install it, run:
 
 ```
 python3 setup.py install
