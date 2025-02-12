@@ -123,13 +123,3 @@ echo 'verdure-git https://github.com/rrthomas/$PROGRAM && \
     ln -s $PROGRAM-$VERSION/src/$PROGRAM .' | \
     verdure --install-cmd=- beetle master --version
 ```
-
-Finally, `--install-prog` allows an arbitrary executable to be used for
-installation:
-
-```
-echo 'verdure-git https://github.com/rrthomas/$PROGRAM && \
-    (cd $PROGRAM-$VERSION && verdure-autotools-bootstrap) && \
-    ln -s $PROGRAM-$VERSION/src/$PROGRAM .' > ./install-beetle
-verdure --install-prog=./install-beetle beetle master --version
-```
