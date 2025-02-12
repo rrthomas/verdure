@@ -3,12 +3,15 @@
 
 import argparse
 import importlib.metadata
-import logging
 import os
 import pathlib
 import shutil
 import subprocess
 import sys
+import warnings
+from warnings import warn
+
+from .warnings_util import die, simple_warning
 
 
 VERSION = importlib.metadata.version("verdure")
@@ -47,13 +50,8 @@ There is NO WARRANTY, to the extent permitted by law.""")
                         help='just install the program, do not run it')
     install_or_run_group.add_argument('args', metavar='ARGUMENT', nargs='*', default=[],
                         help='arguments to PROGRAM')
+    warnings.showwarning = simple_warning(parser.prog)
     args = parser.parse_args()
-
-    # Error messages
-    logging.basicConfig(format=f'{parser.prog}: %(message)s')
-    logger = logging.getLogger(__name__)
-    def warn(s): logger.warning(s)
-    def die(s): warn(s); sys.exit(1)
 
     # Compute installation directory and executable name
     xdg_cache_dir = os.getenv('XDG_CACHE_HOME') or os.path.expanduser('~/.cache')
