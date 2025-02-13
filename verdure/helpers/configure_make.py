@@ -2,13 +2,15 @@
 # Released under the GPL version 3, or (at your option) any later version.
 
 import argparse
+import os
 import subprocess
+from pathlib import Path
 
 
 def main():
     # Command-line arguments
     parser = argparse.ArgumentParser(
-        description="Run an autotools build system starting from autoreconf.",
+        description="Run a configure–make-style build system.",
     )
     parser.add_argument(
         "-V",
@@ -20,10 +22,15 @@ def main():
         "args",
         metavar="...",
         nargs=argparse.REMAINDER,
-        help="extra arguments to autoreconf",
+        help="extra arguments to configure",
     )
     args = parser.parse_args()
 
-    # Clone repository
-    subprocess.check_call(["autoreconf", "-fi"] + args.args)
-    subprocess.check_call(["verdure-configure-make"])
+    # Run configure && make
+    install_dir = os.path.join(Path(os.getcwd()).parent, "install")
+    subprocess.check_call(["./configure", f"--prefix={install_dir}"] + args.args)
+    subprocess.check_call(["make", "install"])
+    prog = os.getenv("PROGRAM_ENV")
+    assert prog is not None
+    with open(prog, "a") as f:
+        print(f'PATH="{install_dir}/bin:$PATH"', file=f)

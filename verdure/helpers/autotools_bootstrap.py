@@ -8,7 +8,7 @@ import subprocess
 def main():
     # Command-line arguments
     parser = argparse.ArgumentParser(
-        description="Run an autotools build system starting from autoreconf.",
+        description="Run an autotools build system starting with bootstrap.",
     )
     parser.add_argument(
         "-V",
@@ -20,10 +20,10 @@ def main():
         "args",
         metavar="...",
         nargs=argparse.REMAINDER,
-        help="extra arguments to autoreconf",
+        help="extra arguments to bootstrap",
     )
     args = parser.parse_args()
 
     # Clone repository
-    subprocess.check_call(["autoreconf", "-fi"] + args.args)
+    subprocess.check_call(["./bootstrap"] + args.args)
     subprocess.check_call(["verdure-configure-make"])

@@ -7,7 +7,7 @@ authors = [
     {name = "Reuben Thomas", email = "rrt@sc3d.org"}
 ]
 readme = "README.md"
-requires-python = ">= 3.9"
+requires-python = ">= 3.11"
 classifiers = [
     "Environment :: Console",
     "Programming Language :: Python :: 3",
@@ -24,6 +24,8 @@ verdure-autotools-bootstrap = "verdure.helpers.autotools_bootstrap:main"
 verdure-configure-make = "verdure.helpers.configure_make:main"
 verdure-cpanm = "verdure.helpers.cpanm:main"
 verdure-git = "verdure.helpers.git:main"
+verdure-pip = "verdure.helpers.pip:main"
+verdure-tarball = "verdure.helpers.tarball:main"
 
 [tool.pyright]
 include = ["verdure"]
