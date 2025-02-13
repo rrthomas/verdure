@@ -72,7 +72,13 @@ name starts `verdure-`, so you can see what is available by typing
 `verdure-` and pressing TAB in most shells. The supplied scripts will tell
 you more about themselves with `--help`.
 
-Here’s an example with a program that has a GNU autotools build system:
+The simplest installations are those of packages from an existing packaging system, such as the [Python Package Index](https://pypi.org). For example, to run a Python program:
+
+```
+verdure --install-cmd 'verdure-pip $PROGRAM==$VERSION' -- rpl 1.7.2 --version
+```
+
+Verdure also comes with helpers for building packages from source, which use the standard `./configure` and `make` combination (most commonly, with the GNU build system). Here’s an example with a program that has a GNU autotools build system:
 
 ```
 verdure --install-cmd \
