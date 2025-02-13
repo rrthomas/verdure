@@ -27,6 +27,12 @@ verdure-git = "verdure.helpers.git:main"
 verdure-pip = "verdure.helpers.pip:main"
 verdure-tarball = "verdure.helpers.tarball:main"
 
+[build-system]
+requires = ["build", "setuptools >= 62.3.0"]
+
+[tool.setuptools]
+packages = ["verdure"]
+
 [tool.pyright]
 include = ["verdure"]
 
